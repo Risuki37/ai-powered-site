@@ -10,6 +10,9 @@ import {
 } from '@/lib/api-response'
 import { ConflictError, UnauthorizedError } from '@/lib/errors'
 
+// このルートは認証情報（headers）を使用するため、動的にレンダリングする必要がある
+export const dynamic = 'force-dynamic'
+
 /**
  * プロフィール情報取得
  * GET /api/profile

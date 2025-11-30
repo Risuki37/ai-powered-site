@@ -11,6 +11,9 @@ import {
 import { UnauthorizedError } from '@/lib/errors'
 import bcrypt from 'bcryptjs'
 
+// このルートは認証情報（headers）を使用するため、動的にレンダリングする必要がある
+export const dynamic = 'force-dynamic'
+
 /**
  * パスワード変更
  * PUT /api/profile/password
