@@ -49,7 +49,11 @@ export async function createTestUser(
     },
   })
 
-  return user
+  return {
+    id: Number(user.id),
+    email: user.email,
+    name: user.name,
+  }
 }
 
 /**
@@ -112,7 +116,7 @@ export async function getTestSession(userId: number): Promise<{
   role: string
 } | null> {
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { id: BigInt(userId) },
     select: {
       id: true,
       email: true,
@@ -125,7 +129,7 @@ export async function getTestSession(userId: number): Promise<{
   }
 
   return {
-    userId: user.id,
+    userId: Number(user.id),
     email: user.email,
     role: user.role,
   }
