@@ -89,7 +89,11 @@ export function createAuthenticatedRequest(
   // 実際の実装では、ミドルウェアでこのヘッダーを検出してセッションをモック
   requestHeaders.set('x-test-user-id', userId.toString())
 
-  const requestInit: RequestInit = {
+  const requestInit: {
+    method: string
+    headers: Headers
+    body?: string
+  } = {
     method,
     headers: requestHeaders,
   }
