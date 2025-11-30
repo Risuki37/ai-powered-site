@@ -194,13 +194,13 @@ export async function POST(request: NextRequest) {
         })
         return !existingPost
       },
-      'post'
+      'post-'
     )
 
     // カテゴリの存在確認
     if (categoryId) {
       const category = await prisma.category.findUnique({
-        where: { id: categoryId },
+        where: { id: BigInt(categoryId) },
       })
       if (!category) {
         return validationErrorResponse('指定されたカテゴリが存在しません')
@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
       const tags = await prisma.tag.findMany({
         where: {
           id: {
-            in: tagIds,
+            in: tagIds.map((id) => BigInt(id)),
           },
         },
       })
@@ -231,12 +231,12 @@ export async function POST(request: NextRequest) {
         coverImage,
         published,
         publishedAt: published ? new Date() : null,
-        authorId: userId,
-        categoryId: categoryId || null,
+        authorId: BigInt(userId),
+        categoryId: categoryId ? BigInt(categoryId) : null,
         tags: tagIds && tagIds.length > 0
           ? {
               create: tagIds.map((tagId) => ({
-                tagId,
+                tagId: BigInt(tagId),
               })),
             }
           : undefined,
