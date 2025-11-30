@@ -458,7 +458,7 @@ export default function CategoriesManagementPage() {
               )}
             </DialogDescription>
           </DialogHeader>
-          {deleteError && <ErrorMessage error={deleteError} className="mb-4" />}
+          {deleteError != null && <ErrorMessage error={deleteError} className="mb-4" />}
           <DialogFooter>
             <Button
               variant="outline"
