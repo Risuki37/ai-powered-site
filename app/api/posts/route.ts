@@ -26,10 +26,10 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1', 10)
     const limit = parseInt(searchParams.get('limit') || '10', 10)
     const categoryId = searchParams.get('category')
-      ? parseInt(searchParams.get('category')!, 10)
+      ? BigInt(parseInt(searchParams.get('category')!, 10))
       : undefined
     const tagId = searchParams.get('tag')
-      ? parseInt(searchParams.get('tag')!, 10)
+      ? BigInt(parseInt(searchParams.get('tag')!, 10))
       : undefined
     const search = searchParams.get('search') || undefined
 

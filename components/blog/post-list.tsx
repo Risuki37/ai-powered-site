@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { PostCard } from './post-card'
+import { prisma } from '@/lib/prisma'
 
 interface Post {
   id: string
@@ -46,28 +47,122 @@ async function fetchPosts(
   tagId?: number,
   search?: string
 ) {
-  const params = new URLSearchParams()
-  params.set('page', page.toString())
-  params.set('limit', '10')
-  if (categoryId) params.set('category', categoryId.toString())
-  if (tagId) params.set('tag', tagId.toString())
-  if (search) params.set('search', search)
+  const limit = 10
+  const skip = (page - 1) * limit
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/posts?${params.toString()}`,
-    {
-      cache: 'no-store',
-    }
-  )
-
-  if (!response.ok) {
-    throw new Error('記事の取得に失敗しました')
+  // クエリ条件の構築（公開済み記事のみ）
+  const where: {
+    published: boolean
+    publishedAt: { not: null }
+    categoryId?: bigint
+    tags?: { some: { tagId: bigint } }
+    OR?: Array<{ title: { contains: string } } | { content: { contains: string } } | { excerpt: { contains: string } }>
+  } = {
+    published: true,
+    publishedAt: {
+      not: null,
+    },
   }
 
-  return response.json() as Promise<{
-    posts: Post[]
-    pagination: Pagination
-  }>
+  if (categoryId) {
+    where.categoryId = BigInt(categoryId)
+  }
+
+  if (tagId) {
+    where.tags = {
+      some: {
+        tagId: BigInt(tagId),
+      },
+    }
+  }
+
+  if (search) {
+    where.OR = [
+      { title: { contains: search } },
+      { content: { contains: search } },
+      { excerpt: { contains: search } },
+    ]
+  }
+
+  // 記事一覧の取得
+  const [posts, total] = await Promise.all([
+    prisma.post.findMany({
+      where,
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        tags: {
+          include: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        publishedAt: 'desc',
+      },
+      skip,
+      take: limit,
+    }),
+    prisma.post.count({ where }),
+  ])
+
+  // レスポンス用のデータ変換
+  const formattedPosts: Post[] = posts.map((post) => ({
+    id: post.id.toString(),
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    coverImage: post.coverImage,
+    author: {
+      id: post.author.id.toString(),
+      name: post.author.name || '',
+      image: post.author.image,
+    },
+    category: post.category
+      ? {
+          id: post.category.id.toString(),
+          name: post.category.name,
+          slug: post.category.slug,
+        }
+      : null,
+    tags: post.tags.map((pt) => ({
+      id: pt.tag.id.toString(),
+      name: pt.tag.name,
+      slug: pt.tag.slug,
+    })),
+    publishedAt: post.publishedAt?.toISOString() || null,
+    createdAt: post.createdAt.toISOString(),
+  }))
+
+  const totalPages = Math.ceil(total / limit)
+
+  return {
+    posts: formattedPosts,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
+  }
 }
 
 export async function PostList({
@@ -76,7 +171,22 @@ export async function PostList({
   tagId,
   search,
 }: PostListProps) {
-  const { posts, pagination } = await fetchPosts(page, categoryId, tagId, search)
+  let posts: Post[] = []
+  let pagination: Pagination = {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+  }
+
+  try {
+    const result = await fetchPosts(page, categoryId, tagId, search)
+    posts = result.posts
+    pagination = result.pagination
+  } catch (error) {
+    console.error('記事取得エラー:', error)
+    // エラーが発生した場合は空のリストを表示
+  }
 
   const buildPageUrl = (newPage: number) => {
     const params = new URLSearchParams()
