@@ -289,7 +289,7 @@ export default function ProfilePage() {
                   className="space-y-4"
                   aria-label="パスワード変更フォーム"
                 >
-                  {passwordError && (
+                  {passwordError != null && (
                     <ErrorMessage error={passwordError} className="mb-4" />
                   )}
 
