@@ -74,6 +74,7 @@ export default function ProfilePage() {
     if (status === 'authenticated') {
       fetchProfile()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status])
 
   const fetchProfile = async () => {
@@ -152,7 +153,7 @@ export default function ProfilePage() {
         throw { error: errorInfo }
       }
 
-      const result = await response.json()
+      await response.json()
 
       setPasswordSuccess('パスワードを変更しました')
       resetPassword()

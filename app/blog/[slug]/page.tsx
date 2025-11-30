@@ -6,7 +6,6 @@ import { auth } from '@/lib/auth'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PostActions } from '@/components/blog/post-actions'
 
 interface PostPageProps {

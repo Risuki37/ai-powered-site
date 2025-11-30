@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       : undefined
 
     // クエリ条件の構築（自分のTodoのみ）
-    const where: any = {
+    const where: Record<string, unknown> = {
       userId,
     }
 

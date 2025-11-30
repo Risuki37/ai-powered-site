@@ -6,7 +6,6 @@
  */
 
 import { NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 
@@ -68,7 +67,7 @@ export function createAuthenticatedRequest(
   options: {
     method?: string
     url?: string
-    body?: any
+    body?: Record<string, unknown>
     headers?: Record<string, string>
   } = {}
 ): NextRequest {

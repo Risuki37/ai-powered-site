@@ -63,6 +63,7 @@ export function TodoList(props: TodoListProps) {
 
   useEffect(() => {
     loadTodos()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.status, props.priority, props.categoryId, props.projectId])
 
   const loadTodos = async () => {

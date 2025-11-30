@@ -12,6 +12,7 @@ import { loginSchema } from '@/lib/validations'
  * NextAuth.js v5設定
  */
 export const authOptions: NextAuthConfig = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adapter: PrismaAdapter(prisma) as any,
   providers: [
     // Email/Password認証
@@ -95,6 +96,7 @@ export const authOptions: NextAuthConfig = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         token.role = (user as any).role
       }
       return token
@@ -102,6 +104,7 @@ export const authOptions: NextAuthConfig = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(session.user as any).role = token.role as string
       }
       return session

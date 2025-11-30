@@ -163,7 +163,7 @@ export async function PUT(
     }
 
     // 更新データの構築
-    const updateData: any = {}
+    const updateData: Record<string, unknown> = {}
     if (title !== undefined) updateData.title = title
     if (description !== undefined) updateData.description = description
     if (status !== undefined) updateData.status = status

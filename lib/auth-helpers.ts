@@ -4,7 +4,6 @@ import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
 import { UnauthorizedError } from './errors'
 import { isTestEnvironment, getTestSession } from './test-helpers'
-import { prisma } from './prisma'
 
 /**
  * リクエストからセッション情報を取得
@@ -39,7 +38,7 @@ export async function getSession(request?: NextRequest): Promise<{
   return {
     userId: Number(session.user.id),
     email: session.user.email!,
-    role: (session.user as any).role || 'USER',
+    role: (session.user as { role?: string }).role || 'USER',
   }
 }
 

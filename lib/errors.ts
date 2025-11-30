@@ -52,7 +52,7 @@ export class ConflictError extends AppError {
  */
 function logError(error: unknown, context?: string) {
   const timestamp = new Date().toISOString()
-  const errorInfo: any = {
+  const errorInfo: Record<string, unknown> = {
     timestamp,
     ...(context && { context }),
   }

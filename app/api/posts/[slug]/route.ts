@@ -28,7 +28,12 @@ export async function GET(
     const session = await getSession(request)
 
     // 記事の取得条件を決定
-    let whereClause: any = {
+    const whereClause: {
+      slug: string
+      published?: boolean
+      publishedAt?: { not: null } | null
+      OR?: Array<{ published: boolean; publishedAt: { not: null } } | { authorId: bigint }>
+    } = {
       slug,
     }
 
@@ -218,7 +223,7 @@ export async function PUT(
     }
 
     // 更新データの構築
-    const updateData: any = {}
+    const updateData: Record<string, unknown> = {}
     if (title !== undefined) updateData.title = title
     if (newSlug !== existingPost.slug) updateData.slug = newSlug
     if (content !== undefined) updateData.content = content

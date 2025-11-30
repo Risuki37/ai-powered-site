@@ -22,7 +22,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await requireAuth(request)
+    await requireAuth(request) // 認証チェック
     const { id } = await params
     const categoryId = BigInt(parseInt(id, 10))
     const body = await request.json()
@@ -55,7 +55,7 @@ export async function PUT(
     const { name, description } = validationResult.data
 
     // 更新データの構築
-    const updateData: any = {}
+    const updateData: Record<string, string | null> = {}
 
     // カテゴリ名の更新
     if (name !== undefined && name !== existingCategory.name) {
@@ -134,7 +134,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await requireAuth(request)
+    await requireAuth(request) // 認証チェック
     const { id } = await params
     const categoryId = BigInt(parseInt(id, 10))
 

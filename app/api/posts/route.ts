@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     const { page: validPage, limit: validLimit } = paginationResult.data
 
     // クエリ条件の構築（公開済み記事のみ）
-    const where: any = {
+    const where: Record<string, unknown> = {
       published: true,
       publishedAt: {
         not: null,

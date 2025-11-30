@@ -41,7 +41,7 @@ export default function EditTodoPage() {
     resolver: zodResolver(updateTodoSchema),
   })
 
-  const statusValue = watch('status')
+  watch('status') // 監視のみ（使用しない）
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -53,6 +53,7 @@ export default function EditTodoPage() {
     if (status === 'authenticated' && todoId) {
       fetchTodo()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, todoId])
 
   const fetchTodo = async () => {

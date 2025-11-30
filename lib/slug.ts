@@ -50,7 +50,7 @@ export function generateSlug(text: string): string {
     return ''
   }
 
-  let slug = text
+  const slug = text
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, '') // 特殊文字を削除

@@ -16,7 +16,7 @@ import { UnauthorizedError, ConflictError } from '@/lib/errors'
  * カテゴリ一覧取得
  * GET /api/categories
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const categories = await prisma.category.findMany({
       orderBy: {
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAuth(request)
+    await requireAuth(request) // 認証チェック
     const body = await request.json()
 
     // バリデーション

@@ -79,6 +79,7 @@ export default function EditPostPage() {
     if (status === 'authenticated' && slug) {
       fetchData()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, slug])
 
   const fetchData = async () => {

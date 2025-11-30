@@ -22,7 +22,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await requireAuth(request)
+    await requireAuth(request) // 認証チェック
     const { id } = await params
     const tagId = BigInt(parseInt(id, 10))
     const body = await request.json()
@@ -57,7 +57,7 @@ export async function PUT(
     const { name } = validationResult.data
 
     // 更新データの構築
-    const updateData: any = {}
+    const updateData: Record<string, string> = {}
 
     // タグ名の更新
     if (name !== undefined && name !== existingTag.name) {
@@ -132,7 +132,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await requireAuth(request)
+    await requireAuth(request) // 認証チェック
     const { id } = await params
     const tagId = BigInt(parseInt(id, 10))
 
