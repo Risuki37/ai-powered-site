@@ -1,0 +1,29 @@
+# Vercel ignore file
+# Vercelにデプロイしないファイル・ディレクトリを指定
+
+# 開発環境ファイル
+.env
+.env*.local
+.env.development.local
+.env.test.local
+
+# ドキュメント
+docs/
+*.md
+!README.md
+
+# テスト
+**/__tests__/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# 開発ツール
+.vscode/
+.idea/
+
+# その他
+.DS_Store
+*.log
+

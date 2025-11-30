@@ -1,0 +1,207 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  email         String    @unique @db.VarChar(255)
+  emailVerified DateTime? @db.DateTime(0)
+  name          String?   @db.VarChar(255)
+  password      String?   @db.VarChar(255)
+  image         String?   @db.VarChar(500)
+  bio           String?   @db.Text
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now()) @db.DateTime(0)
+  updatedAt     DateTime  @default(now()) @updatedAt @db.DateTime(0)
+  accounts      Account[]
+  posts         Post[]
+  projects      Project[]
+  sessions      Session[]
+  todos         Todo[]
+
+  @@map("users")
+}
+
+model Account {
+  id                BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  userId            BigInt  @db.UnsignedBigInt
+  type              String  @db.VarChar(255)
+  provider          String  @db.VarChar(255)
+  providerAccountId String  @db.VarChar(255)
+  refreshToken      String? @db.Text
+  accessToken       String? @db.Text
+  expiresAt         Int?
+  tokenType         String? @db.VarChar(255)
+  scope             String? @db.VarChar(255)
+  idToken           String? @db.Text
+  sessionState      String? @db.VarChar(255)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @db.VarChar(255)
+  sessionToken String   @unique @db.VarChar(255)
+  userId       BigInt   @db.UnsignedBigInt
+  expires      DateTime @db.DateTime(0)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String   @db.VarChar(255)
+  token      String   @unique @db.VarChar(255)
+  expires    DateTime @db.DateTime(0)
+
+  @@id([identifier, token])
+  @@index([token])
+  @@map("verification_tokens")
+}
+
+model Post {
+  id              BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  title           String    @db.VarChar(200)
+  slug            String    @unique @db.VarChar(255)
+  content         String    @db.Text
+  excerpt         String?   @db.VarChar(500)
+  coverImage      String?   @db.VarChar(500)
+  published       Boolean   @default(false)
+  aiGenerated     Boolean   @default(false)
+  authorId        BigInt    @db.UnsignedBigInt
+  categoryId      BigInt?   @db.UnsignedBigInt
+  metaTitle       String?   @db.VarChar(200)
+  metaDescription String?   @db.VarChar(500)
+  createdAt       DateTime  @default(now()) @db.DateTime(0)
+  updatedAt       DateTime  @default(now()) @updatedAt @db.DateTime(0)
+  publishedAt     DateTime? @db.DateTime(0)
+  tags            PostTag[]
+  author          User      @relation(fields: [authorId], references: [id])
+  category        Category? @relation(fields: [categoryId], references: [id])
+
+  @@index([slug])
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([published])
+  @@index([publishedAt])
+  @@index([aiGenerated])
+  @@map("posts")
+}
+
+model Category {
+  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  name        String   @unique @db.VarChar(100)
+  slug        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  updatedAt   DateTime @default(now()) @updatedAt @db.DateTime(0)
+  posts       Post[]
+
+  @@index([slug])
+  @@index([name])
+  @@map("categories")
+}
+
+model Tag {
+  id        BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name      String    @unique @db.VarChar(50)
+  slug      String    @unique @db.VarChar(50)
+  createdAt DateTime  @default(now()) @db.DateTime(0)
+  updatedAt DateTime  @default(now()) @updatedAt @db.DateTime(0)
+  posts     PostTag[]
+
+  @@index([slug])
+  @@index([name])
+  @@map("tags")
+}
+
+model PostTag {
+  postId    BigInt   @db.UnsignedBigInt
+  tagId     BigInt   @db.UnsignedBigInt
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@index([postId])
+  @@index([tagId])
+  @@map("post_tags")
+}
+
+model Todo {
+  id          BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
+  title       String        @db.VarChar(100)
+  description String?       @db.Text
+  status      TodoStatus    @default(TODO)
+  priority    TodoPriority  @default(MEDIUM)
+  dueDate     DateTime?     @db.DateTime(0)
+  userId      BigInt        @db.UnsignedBigInt
+  categoryId  BigInt?       @db.UnsignedBigInt
+  projectId   BigInt?       @db.UnsignedBigInt
+  createdAt   DateTime      @default(now()) @db.DateTime(0)
+  updatedAt   DateTime      @default(now()) @updatedAt @db.DateTime(0)
+  completedAt DateTime?     @db.DateTime(0)
+  category    TodoCategory? @relation(fields: [categoryId], references: [id])
+  project     Project?      @relation(fields: [projectId], references: [id])
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([priority])
+  @@index([dueDate])
+  @@index([categoryId])
+  @@index([projectId])
+  @@map("todos")
+}
+
+model TodoCategory {
+  id        BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  name      String   @unique @db.VarChar(50)
+  color     String?  @db.VarChar(7)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @updatedAt @db.DateTime(0)
+  todos     Todo[]
+
+  @@index([name])
+  @@map("todo_categories")
+}
+
+model Project {
+  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  userId      BigInt   @db.UnsignedBigInt
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  updatedAt   DateTime @default(now()) @updatedAt @db.DateTime(0)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todos       Todo[]
+
+  @@index([userId])
+  @@map("projects")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum TodoStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TodoPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
