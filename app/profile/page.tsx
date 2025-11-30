@@ -188,7 +188,7 @@ export default function ProfilePage() {
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <h1 className="text-3xl font-bold mb-8">プロフィール</h1>
 
-          {error && <ErrorMessage error={error} className="mb-6" />}
+          {error != null && <ErrorMessage error={error} className="mb-6" />}
 
           {success && (
             <div className="mb-6 rounded-md bg-green-500/10 p-4">

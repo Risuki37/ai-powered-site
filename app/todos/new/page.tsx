@@ -102,7 +102,7 @@ export default function NewTodoPage() {
             </p>
           </div>
 
-          {error && <ErrorMessage error={error} className="mb-6" />}
+          {error != null && <ErrorMessage error={error} className="mb-6" />}
 
           <Card>
             <CardHeader>

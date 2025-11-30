@@ -238,7 +238,7 @@ export default function CategoriesManagementPage() {
             </Button>
           </div>
 
-          {error && <ErrorMessage error={error} className="mb-6" />}
+          {error != null && <ErrorMessage error={error} className="mb-6" />}
 
           <Card>
             <CardHeader>
@@ -349,7 +349,7 @@ export default function CategoriesManagementPage() {
               )}
             </div>
 
-            {error && <ErrorMessage error={error} autoFocus />}
+            {error != null && <ErrorMessage error={error} autoFocus />}
 
             <DialogFooter>
               <Button
@@ -416,7 +416,7 @@ export default function CategoriesManagementPage() {
               )}
             </div>
 
-            {error && <ErrorMessage error={error} autoFocus />}
+            {error != null && <ErrorMessage error={error} autoFocus />}
 
             <DialogFooter>
               <Button

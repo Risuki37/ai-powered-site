@@ -128,7 +128,7 @@ function LoginForm() {
             )}
           </div>
 
-          {error && <ErrorMessage error={error} />}
+          {error != null && <ErrorMessage error={error} />}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? 'ログイン中...' : 'ログイン'}

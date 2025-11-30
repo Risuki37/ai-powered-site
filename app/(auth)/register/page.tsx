@@ -127,7 +127,7 @@ export default function RegisterPage() {
             )}
           </div>
 
-          {error && <ErrorMessage error={error} />}
+          {error != null && <ErrorMessage error={error} />}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? '登録中...' : '新規登録'}
