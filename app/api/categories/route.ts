@@ -12,12 +12,18 @@ import {
 } from '@/lib/api-response'
 import { UnauthorizedError, ConflictError } from '@/lib/errors'
 
+// このルートは認証情報（headers）を使用するため、動的にレンダリングする必要がある
+export const dynamic = 'force-dynamic'
+
 /**
  * カテゴリ一覧取得
  * GET /api/categories
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // カテゴリ管理ページは認証が必要なため、認証チェックを追加
+    await requireAuth(request)
+    
     const categories = await prisma.category.findMany({
       orderBy: {
         name: 'asc',
@@ -44,6 +50,9 @@ export async function GET() {
       categories: formattedCategories,
     })
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return unauthorizedResponse(error.message)
+    }
     return errorResponse(error, 'カテゴリ一覧の取得に失敗しました')
   }
 }
