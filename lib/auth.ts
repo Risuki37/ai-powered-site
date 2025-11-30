@@ -37,9 +37,11 @@ export const authOptions: NextAuthConfig = {
           throw new Error('入力内容に誤りがあります')
         }
 
+        const { email, password } = validatedFields.data
+
         // ユーザー検索
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
         })
 
         if (!user || !user.password) {
@@ -48,7 +50,7 @@ export const authOptions: NextAuthConfig = {
 
         // パスワード検証
         const isPasswordValid = await bcrypt.compare(
-          credentials.password,
+          password,
           user.password
         )
 
